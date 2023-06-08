@@ -2,7 +2,6 @@
 
 
 #include "Elevator.h"
-//#include "Juno_CPPCharacter.h"
 #include "Components/BoxComponent.h"
 #include "Components/TimelineComponent.h"
 #include "TimerManager.h"
@@ -95,23 +94,16 @@ void AElevator::MyInteract_Implementation()
 {
 	CloseDoor();
 
-	//GoUp();
-
 	GetWorldTimerManager().SetTimer(TimerHandle1, this, &AElevator::GoUp, 2.f, false);
 
 	GetWorldTimerManager().SetTimer(TimerHandle2, this, &AElevator::OpenDoor, 12.f, false);
 
 }
 
-void AElevator::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-
-}
-
 void AElevator::ControlElevator(float Value)
 {
-	FVector ElevatorInitialLocation = FVector(830.f, 2225.f, 1510.f);
-	FVector ElevatorTargetLocation = FVector(830.f, 2225.f, 2465.f);
+	FVector ElevatorInitialLocation = FVector(865.f, 2420.f, 1350.f);
+	FVector ElevatorTargetLocation = FVector(865.f, 2420.f, 2305.f);
 
 	FVector NewElevatorLocation = FMath::Lerp(ElevatorInitialLocation, ElevatorTargetLocation, Value);
 	Elevator->SetRelativeLocation(NewElevatorLocation);
@@ -147,6 +139,7 @@ void AElevator::CloseDoor()
 	{
 		DoorTimeline->ReverseFromEnd();
 	}
+
 }
 
 void AElevator::GoUp()
