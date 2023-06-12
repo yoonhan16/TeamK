@@ -2,7 +2,6 @@
 
 
 #include "Door.h"
-//#include "Juno_CPPCharacter.h"
 #include "Components/BoxComponent.h"
 
 // Sets default values

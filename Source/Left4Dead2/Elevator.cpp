@@ -5,6 +5,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/TimelineComponent.h"
 #include "TimerManager.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AElevator::AElevator()

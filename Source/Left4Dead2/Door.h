@@ -17,13 +17,6 @@ public:
 	// Sets default values for this actor's properties
 	ADoor();
 
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-		class UStaticMeshComponent* DoorFrame;
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-		UStaticMeshComponent* Door;
-	UPROPERTY(VisibleAnywhere, Category = "Collision")
-		class UBoxComponent* BoxCollision;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -34,19 +27,25 @@ public:
 
 	virtual void MyInteract_Implementation() override;
 
+	UFUNCTION(BlueprintCallable, Category = "Door")
+	void OpenDoor(float Value);
+
 protected:
+	UPROPERTY(VisibleAnywhere, Category = "Mesh")
+	class UStaticMeshComponent* DoorFrame;
+	UPROPERTY(VisibleAnywhere, Category = "Mesh")
+	UStaticMeshComponent* Door;
+	UPROPERTY(VisibleAnywhere, Category = "Collision")
+	class UBoxComponent* BoxCollision;
 
 	FTimeline Timeline;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-		UCurveFloat* CurveFloat;
+	UCurveFloat* CurveFloat;
 
 	bool bIsDoorClosed = true;
 
 	UPROPERTY(EditAnywhere)
-		float DoorRotateAngle = 90.f;
-
-	UFUNCTION()
-		void OpenDoor(float Value);
+	float DoorRotateAngle = 90.f;
 
 	bool bDoorOnSameSide;
 	void SetDoorOnSameSide();
