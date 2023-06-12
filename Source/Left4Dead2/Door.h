@@ -23,7 +23,7 @@ public:
 		UStaticMeshComponent* Door;
 	UPROPERTY(VisibleAnywhere, Category = "Collision")
 		class UBoxComponent* BoxCollision;
-
+	//sdsd
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
