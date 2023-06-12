@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/TimelineComponent.h"
+#include "Math/UnrealMathUtility.h"
 #include "InteractInterface.h"
 #include "Door2.generated.h"
 
@@ -17,15 +18,6 @@ public:
 	// Sets default values for this actor's properties
 	ADoor2();
 
-	UPROPERTY(VisibleAnywhere, Category = "Collision")
-		class UBoxComponent* BoxCollision;
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-		class UStaticMeshComponent* DoorFrame;
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-		UStaticMeshComponent* LeftDoor;
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-		UStaticMeshComponent* RightDoor;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -36,22 +28,47 @@ public:
 
 	virtual void MyInteract_Implementation() override;
 
+	UFUNCTION(BlueprintCallable, Category = "Door")
+	void OpenDoor();
+
+	UPROPERTY(EditAnywhere, Category = "Door")
+	class UTimelineComponent* DoorTimeline;
+
 private:
 
 
 protected:
+	UPROPERTY(VisibleAnywhere, Category = "Collision")
+	class UBoxComponent* BoxCollision;
+	UPROPERTY(VisibleAnywhere, Category = "Mesh")
+	class UStaticMeshComponent* DoorFrame;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh", Replicated)
+	UStaticMeshComponent* LeftDoor;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh", Replicated)
+	UStaticMeshComponent* RightDoor;
+
+	UFUNCTION(Server, Reliable)
+	void Server_OpenDoor();
+	void Server_OpenDoor_Implementation();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_OpenDoor();
+	void Multicast_OpenDoor_Implementation();
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
 	FTimeline Timeline;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-		UCurveFloat* CurveFloat;
+	UCurveFloat* CurveFloat;
 
 	bool bIsDoorClosed = true;
 
 	UPROPERTY(EditAnywhere)
-		float DoorRotateAngle = 90.f;
-
-	UFUNCTION()
-		void OpenDoor(float Value);
+	float DoorRotateAngle = 90.f;
 
 	bool bDoorOnSameSide;
-	void SetDoorOnSameSide();
+	//void SetDoorOnSameSide();
+
+	UFUNCTION()
+	void ControlDoor(float Value);
 };

@@ -3,6 +3,7 @@
 
 #include "Door.h"
 #include "Components/BoxComponent.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ADoor::ADoor()
@@ -19,7 +20,16 @@ ADoor::ADoor()
 
 	Door = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Door"));
 	Door->SetupAttachment(DoorFrame);
+	Door->SetIsReplicated(true);
+	Door->SetNetAddressable();
+	Door->SetShouldUpdatePhysicsVolume(true);
+	Door->SetNetAddressable();
+	Door->SetOwnerNoSee(false);
 
+	DoorTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("DoorTimeline"));
+
+	SetReplicateMovement(true);
+	bAlwaysRelevant = true;
 }
 
 // Called when the game starts or when spawned
@@ -29,8 +39,8 @@ void ADoor::BeginPlay()
 	if (CurveFloat)
 	{
 		FOnTimelineFloat TimelineProgress;
-		TimelineProgress.BindDynamic(this, &ADoor::OpenDoor);
-		Timeline.AddInterpFloat(CurveFloat, TimelineProgress);
+		TimelineProgress.BindUFunction(this, FName("ControlDoor"));
+		DoorTimeline->AddInterpFloat(CurveFloat, TimelineProgress);
 	}
 }
 
@@ -38,46 +48,80 @@ void ADoor::BeginPlay()
 void ADoor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	Timeline.TickTimeline(DeltaTime);
 }
 
 void ADoor::MyInteract_Implementation()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Interacted with Door!"));
+	//UE_LOG(LogTemp, Warning, TEXT("Interacted with Door!"));
 
+	OpenDoor();
+
+}
+
+void ADoor::OpenDoor()
+{
+	Server_OpenDoor();
+}
+
+void ADoor::Server_OpenDoor_Implementation()
+{
+	Multicast_OpenDoor();
+}
+
+bool ADoor::Server_OpenDoor_Validate()
+{
+	return true;
+}
+
+void ADoor::Multicast_OpenDoor_Implementation()
+{
 	if (bIsDoorClosed)
 	{
-		SetDoorOnSameSide();
-		Timeline.Play();
+		if (!DoorTimeline->IsPlaying())
+		{
+			DoorTimeline->PlayFromStart();
+		}
 	}
 	else
 	{
-		Timeline.Reverse();
+		if (!DoorTimeline->IsPlaying())
+		{
+			DoorTimeline->ReverseFromEnd();
+		}
 	}
 
 	bIsDoorClosed = !bIsDoorClosed;
+	UE_LOG(LogTemp, Warning, TEXT("Interacted with Door!"));
+}
+
+void ADoor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME_CONDITION(ADoor, Door, COND_SimulatedOnly);
+	DOREPLIFETIME(ADoor, bIsDoorClosed);
 
 }
 
-void ADoor::OpenDoor(float Value)
+void ADoor::OnRep_IsDoorClosed()
 {
-	float Angle = bDoorOnSameSide ? -DoorRotateAngle : DoorRotateAngle;
+	if (bIsDoorClosed)
+	{
+		DoorTimeline->PlayFromStart();
+	}
+	else
+	{
+		DoorTimeline->ReverseFromEnd();
+	}
+}
 
-	FRotator Rot = FRotator(0.f, Angle * Value, 0.f);
+void ADoor::ControlDoor(float Value)
+{
+	FRotator DoorInitialRotation = FRotator(0.f, 0.f, 0.f);
+	FRotator DoorTargetRoatation = FRotator(0.f, DoorRotateAngle, 0.f);
+
+	FRotator Rot = FMath::Lerp(DoorInitialRotation, DoorTargetRoatation, Value);
+	//FRotator Rot = FRotator(0.f, Angle * Value, 0.f);
 
 	Door->SetRelativeRotation(Rot);
-
-}
-
-void ADoor::SetDoorOnSameSide()
-{
-	//if (Character)
-	//{
-		//FVector CharacterFV = Character->GetActorForwardVector();
-		//FVector DoorFV = GetActorForwardVector();
-		//bDoorOnSameSide = FVector::DotProduct(CharacterFV, DoorFV) >= 0;
-	//}
-	UE_LOG(LogTemp, Warning, TEXT("%d"), bDoorOnSameSide);
 }
 

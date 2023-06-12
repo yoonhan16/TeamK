@@ -2,8 +2,8 @@
 
 
 #include "Door2.h"
-//#include "Juno_CPPCharacter.h"
 #include "Components/BoxComponent.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ADoor2::ADoor2()
@@ -22,6 +22,11 @@ ADoor2::ADoor2()
 
 	RightDoor = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RightDoor"));
 	RightDoor->SetupAttachment(DoorFrame);
+	
+	DoorTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("DoorTimeline"));
+
+	SetReplicateMovement(false);
+	bAlwaysRelevant = true;
 
 }
 
@@ -32,7 +37,7 @@ void ADoor2::BeginPlay()
 	if (CurveFloat)
 	{
 		FOnTimelineFloat TimelineProgress;
-		TimelineProgress.BindDynamic(this, &ADoor2::OpenDoor);
+		TimelineProgress.BindDynamic(this, &ADoor2::ControlDoor);
 		Timeline.AddInterpFloat(CurveFloat, TimelineProgress);
 	}
 }
@@ -47,39 +52,64 @@ void ADoor2::Tick(float DeltaTime)
 
 void ADoor2::MyInteract_Implementation()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Interacted with Door!"));
+	OpenDoor();
+}
 
+void ADoor2::OpenDoor()
+{
+	Server_OpenDoor();
+	UE_LOG(LogTemp, Warning, TEXT("Interacted with Door!"));
+}
+
+
+void ADoor2::Server_OpenDoor_Implementation()
+{
+	Multicast_OpenDoor();
+}
+
+void ADoor2::Multicast_OpenDoor_Implementation()
+{
 	if (bIsDoorClosed)
 	{
-		SetDoorOnSameSide();
-		Timeline.Play();
+		//SetDoorOnSameSide();
+		//Timeline.Play();
+		if (!DoorTimeline->IsPlaying())
+		{
+			DoorTimeline->PlayFromStart();
+		}
 	}
 	else
 	{
-		Timeline.Reverse();
+		//Timeline.Reverse();
+		if (!DoorTimeline->IsPlaying())
+		{
+			DoorTimeline->ReverseFromEnd();
+		}
 	}
 
 	bIsDoorClosed = !bIsDoorClosed;
 }
 
-void ADoor2::OpenDoor(float Value)
+void ADoor2::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ADoor2, LeftDoor);
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ADoor2, RightDoor);
+
+}
+
+void ADoor2::ControlDoor(float Value)
 {
 	float Angle = bDoorOnSameSide ? -DoorRotateAngle : DoorRotateAngle;
 
-	FRotator Rot1 = FRotator(0.f, Angle * Value, 0.f);
-	FRotator Rot2 = FRotator(0.f, 180 - Angle * Value, 0.f);
+	FRotator DoorInitialRotation = FRotator(0.f, 0.f, 0.f);
+	FRotator DoorTargetRoatation = FRotator(0.f, DoorRotateAngle, 0.f);
+
+	FRotator Rot1 = FMath::Lerp(DoorInitialRotation, DoorTargetRoatation, Value);
+	FRotator Rot2 = FMath::Lerp(DoorInitialRotation, DoorTargetRoatation, Value);
+	//FRotator Rot = FRotator(0.f, Angle * Value, 0.f);
 
 	LeftDoor->SetRelativeRotation(Rot1);
 	RightDoor->SetRelativeRotation(Rot2);
-	//UE_LOG(LogTemp, Display, TEXT("Rotate"));
-}
-
-void ADoor2::SetDoorOnSameSide()
-{
-	/*if (Character)
-	{
-		FVector CharacterFV = Character->GetActorForwardVector();
-		FVector DoorFV = GetActorForwardVector();
-		bDoorOnSameSide = FVector::DotProduct(CharacterFV, DoorFV) >= 0;
-	}*/
 }

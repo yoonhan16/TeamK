@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Components/TimelineComponent.h"
+#include "Math/UnrealMathUtility.h"
 #include "InteractInterface.h"
 #include "Door.generated.h"
 
@@ -28,25 +29,44 @@ public:
 	virtual void MyInteract_Implementation() override;
 
 	UFUNCTION(BlueprintCallable, Category = "Door")
-	void OpenDoor(float Value);
+	void OpenDoor();
+
+	UPROPERTY(EditAnywhere, Category = "Door")
+	class UTimelineComponent* DoorTimeline;
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	class UStaticMeshComponent* DoorFrame;
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh", Replicated)
 	UStaticMeshComponent* Door;
-	UPROPERTY(VisibleAnywhere, Category = "Collision")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collision")
 	class UBoxComponent* BoxCollision;
 
-	FTimeline Timeline;
-	UPROPERTY(BlueprintReadOnly, EditAnywhere)
-	UCurveFloat* CurveFloat;
+	UFUNCTION(Server, Reliable)
+	void Server_OpenDoor();
+	virtual void Server_OpenDoor_Implementation();
+	virtual bool Server_OpenDoor_Validate();
 
-	bool bIsDoorClosed = true;
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_OpenDoor();
+	virtual void Multicast_OpenDoor_Implementation();
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Timeline")
+	UCurveFloat* CurveFloat;
 
 	UPROPERTY(EditAnywhere)
 	float DoorRotateAngle = 90.f;
 
-	bool bDoorOnSameSide;
-	void SetDoorOnSameSide();
+	UPROPERTY(ReplicatedUsing = OnRep_IsDoorClosed)
+	bool bIsDoorClosed = true;
+
+	UFUNCTION()
+	void OnRep_IsDoorClosed();
+
+	UFUNCTION()
+	void ControlDoor(float Value);
+
+public:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 };
