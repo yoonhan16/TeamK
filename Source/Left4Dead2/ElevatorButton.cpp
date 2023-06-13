@@ -16,6 +16,8 @@ AElevatorButton::AElevatorButton()
 	Button = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Button"));
 	Button->SetupAttachment(RootComponent);
 
+	bReplicates = true;
+	bAlwaysRelevant = true;
 }
 
 // Called when the game starts or when spawned
@@ -72,7 +74,6 @@ void AElevatorButton::MyInteract_Implementation()
 			Elevator->DoorTimeline->PlayFromStart();
 		}
 	}
-
 }
 
 void AElevatorButton::SetTask(bool bFlag)
