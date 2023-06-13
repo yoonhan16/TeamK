@@ -61,6 +61,9 @@ AElevator::AElevator()
 
 	ElevatorTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("ElevatorTimeline"));
 
+	bReplicates = true;
+	SetReplicateMovement(false);
+	bAlwaysRelevant = true;
 }
 
 // Called when the game starts or when spawned
@@ -85,19 +88,145 @@ void AElevator::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//Timeline1.TickTimeline(DeltaTime);
-	Timeline.TickTimeline(DeltaTime);
-
+	// 액터의 로컬 역할을 디버그 문자열로 그려줌
+	FString value;
+	UEnum::GetValueAsString(GetLocalRole(), value);
+	DrawDebugString(GetWorld(), FVector(0, 0, 100), value, this, FColor::Green, DeltaTime);
 }
 
 void AElevator::MyInteract_Implementation()
 {
-	CloseDoor();
+	if (ROLE_Authority)
+	{
+		CloseDoor();
 
-	GetWorldTimerManager().SetTimer(TimerHandle1, this, &AElevator::GoUp, 2.f, false);
+		GetWorldTimerManager().SetTimer(TimerHandle1, this, &AElevator::GoUp, 2.f, false);
 
-	GetWorldTimerManager().SetTimer(TimerHandle2, this, &AElevator::OpenDoor, 12.f, false);
+		GetWorldTimerManager().SetTimer(TimerHandle2, this, &AElevator::OpenDoor, 12.f, false);
+	}
+}
 
+void AElevator::OpenDoor()
+{
+	Server_OpenDoor();
+}
+
+void AElevator::Server_OpenDoor_Implementation()
+{
+	Multicast_OpenDoor();
+}
+
+bool AElevator::Server_OpenDoor_Validate()
+{
+	return true;
+}
+
+void AElevator::Multicast_OpenDoor_Implementation()
+{
+	if (!DoorTimeline->IsPlaying())
+	{
+		DoorTimeline->PlayFromStart();
+	}
+}
+
+void AElevator::CloseDoor()
+{
+	Server_CloseDoor();
+}
+
+void AElevator::Server_CloseDoor_Implementation()
+{
+	Multicast_OpenDoor();
+}
+
+bool AElevator::Server_CloseDoor_Validate()
+{
+	return true;
+}
+
+void AElevator::Multicast_CloseDoor_Implementation()
+{
+	if (!DoorTimeline->IsPlaying())
+	{
+		DoorTimeline->ReverseFromEnd();
+	}
+}
+
+void AElevator::GoUp()
+{
+	Server_GoUp();
+	
+}
+
+void AElevator::Server_GoUp_Implementation()
+{
+	Multicast_GoUp();
+}
+
+bool AElevator::Server_GoUp_Validate()
+{
+	return true;
+}
+
+void AElevator::Multicast_GoUp_Implementation()
+{
+	if (!ElevatorTimeline->IsPlaying())
+	{
+		ElevatorTimeline->PlayFromStart();
+		UE_LOG(LogTemp, Warning, TEXT("Elevator is Going Up!"));
+	}
+}
+
+void AElevator::LightOff()
+{
+	Server_LightOff();
+}
+
+void AElevator::Server_LightOff_Implementation()
+{
+	Multicast_GoUp();
+}
+
+bool AElevator::Server_LightOff_Validate()
+{
+	return true;
+}
+
+void AElevator::Multicast_LightOff_Implementation()
+{
+	Light1->SetVisibility(false);
+	Light2->SetVisibility(false);
+}
+
+void AElevator::LightOn()
+{
+	Server_LightOn();
+}
+
+void AElevator::Server_LightOn_Implementation()
+{
+	Multicast_GoUp();
+}
+
+bool AElevator::Server_LightOn_Validate()
+{
+	return true;
+}
+
+void AElevator::Multicast_LightOn_Implementation()
+{
+	Light1->SetVisibility(true);
+	Light2->SetVisibility(true);
+}
+
+// 부모 클래스의 GetLifetimeReplicatedProps 함수를 호출하여 기본 복제 설정을 가져옴
+void AElevator::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AElevator, Elevator);
+	DOREPLIFETIME(AElevator, Door1);
+	DOREPLIFETIME(AElevator, Door2);
 }
 
 void AElevator::ControlElevator(float Value)
@@ -108,7 +237,7 @@ void AElevator::ControlElevator(float Value)
 	FVector NewElevatorLocation = FMath::Lerp(ElevatorInitialLocation, ElevatorTargetLocation, Value);
 	Elevator->SetRelativeLocation(NewElevatorLocation);
 
-	UE_LOG(LogTemp, Warning, TEXT("Elevator is Moving!"));
+	UE_LOG(LogTemp, Warning, TEXT("Elevator's going up."));
 }
 
 void AElevator::ControlDoor(float Value)
@@ -122,43 +251,4 @@ void AElevator::ControlDoor(float Value)
 	FVector NewRightDoorLocation = FMath::Lerp(RightDoorInitialLocation, RightDoorTargetLocation, Value);
 	Door1->SetRelativeLocation(NewLeftDoorLocation);
 	Door2->SetRelativeLocation(NewRightDoorLocation);
-
-}
-
-void AElevator::OpenDoor()
-{
-	if (!DoorTimeline->IsPlaying())
-	{
-		DoorTimeline->PlayFromStart();
-	}
-}
-
-void AElevator::CloseDoor()
-{
-	if (!DoorTimeline->IsPlaying())
-	{
-		DoorTimeline->ReverseFromEnd();
-	}
-
-}
-
-void AElevator::GoUp()
-{
-	if (!ElevatorTimeline->IsPlaying())
-	{
-		ElevatorTimeline->PlayFromStart();
-		UE_LOG(LogTemp, Warning, TEXT("Elevator is Going Up!"));
-	}
-}
-
-void AElevator::LightOff()
-{
-	Light1->SetVisibility(false);
-	Light2->SetVisibility(false);
-}
-
-void AElevator::LightOn()
-{
-	Light1->SetVisibility(true);
-	Light2->SetVisibility(true);
 }
