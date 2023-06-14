@@ -11,12 +11,14 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class LEFT4DEAD2_API UBTTask_RotateToPlayerCharacter : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 	
 public:
+
+	ACharacter* TargetCharacter;
 
 	UBTTask_RotateToPlayerCharacter(FObjectInitializer const& object_initializer);
 

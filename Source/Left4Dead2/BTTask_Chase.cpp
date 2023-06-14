@@ -14,7 +14,6 @@ UBTTask_Chase::UBTTask_Chase(FObjectInitializer const& object_initializer)
 
 EBTNodeResult::Type UBTTask_Chase::ExecuteTask(UBehaviorTreeComponent& owner_comp, uint8* node_memory)
 {
-	//int32 PlayerIndex[4] = { 0,1,2,3 };
 	// AI 컨트롤러를 통해 TargetLocation 가져오기
 	AAIController_CPP* const Controller = Cast<AAIController_CPP>(owner_comp.GetAIOwner());
 	FVector const player_location = Controller->get_blackboard()->GetValueAsVector(BB_Keys::Target_Location);

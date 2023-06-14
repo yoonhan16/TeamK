@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BehaviorTree/BlackboardData.h"
-#include "BlackboardData_BasicZombie.generated.h"
+#include "GameFramework/PlayerState.h"
+#include "ShootingPlayerState_CPP.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class LEFT4DEAD2_API UBlackboardData_BasicZombie : public UBlackboardData
+class LEFT4DEAD2_API AShootingPlayerState_CPP : public APlayerState
 {
 	GENERATED_BODY()
 	

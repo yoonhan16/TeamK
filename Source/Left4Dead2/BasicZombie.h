@@ -79,6 +79,7 @@ public:
 
 	ABasicZombie* BasicZombie_CPP;
 	ASystemChar* PlayerCharacter_CPP;
+	ACharacter* TargetCharacter;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	UStaticMeshComponent* Body;

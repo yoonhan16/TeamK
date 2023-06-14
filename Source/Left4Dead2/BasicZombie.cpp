@@ -59,8 +59,6 @@ void ABasicZombie::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* O
 	//int32 PlayerIndex[4] = { 0,1,2,3 };
 	//ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), *PlayerIndex);
 
-	ACharacter* TargetCharacter = nullptr;
-
 	for (int32 i = 0; i < 4; i++)
 	{
 		ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), i);
@@ -80,7 +78,7 @@ void ABasicZombie::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* O
 				UGameplayStatics::ApplyDamage(TargetCharacter, 3.0f, ABasicZombie::GetController(), nullptr, NULL);
 
 				UE_LOG(LogTemp, Warning, TEXT("Damage Applied to Player : Called"));
-			} while (AttackTimer >= 0.8f);
+			} while (AttackTimer >= 1.0f);
 		}
 	}
 }
@@ -89,8 +87,6 @@ void ABasicZombie::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* Oth
 {
 	//int32 PlayerIndex[4] = { 0,1,2,3 };
 	//ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), *PlayerIndex);
-
-	ACharacter* TargetCharacter = nullptr;
 
 	for (int32 i = 0; i < 4; i++)
 	{
@@ -125,8 +121,6 @@ float ABasicZombie::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AC
 	//int32 PlayerIndex[4] = { 0,1,2,3 };
 	//ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), *PlayerIndex);
 	//AController* const PlayerController = PlayerCharacter->GetController();
-
-	ACharacter* TargetCharacter = nullptr;
 
 	for (int32 i = 0; i < 4; i++)
 	{
@@ -182,9 +176,9 @@ void ABasicZombie::Tick(float DeltaTime)
 	{
 		AttackTimer = AttackTimer + DeltaTime;
 
-		if (AttackTimer >= 0.8f)
+		if (AttackTimer >= 1.0f)
 		{
-			AttackTimer = 0;
+			AttackTimer = 0.0f;
 		}
 	}
 

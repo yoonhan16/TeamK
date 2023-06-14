@@ -27,12 +27,10 @@ EBTNodeResult::Type UBTTask_RotateToPlayerCharacter::ExecuteTask(UBehaviorTreeCo
 
 	double MinDistance = 0;
 
-	ACharacter* TargetCharacter = nullptr;
-
 	for (int32 i = 0; i < 4; i++)
 	{
 		ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), i);
-		UE_LOG(LogTemp, Warning, TEXT("i: %d"), i);
+		//UE_LOG(LogTemp, Warning, TEXT("i: %d"), i);
 		double CurrentDistance = FVector::Dist(PlayerCharacter->GetActorLocation(), zombie_location);
 
 		if (i == 0)
@@ -51,6 +49,8 @@ EBTNodeResult::Type UBTTask_RotateToPlayerCharacter::ExecuteTask(UBehaviorTreeCo
 
 	//ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), *PlayerIndex);
 
+	// 가장 가까운 플레이어 & 플레이어의 방향 추출
+	Controller->get_blackboard()->SetValueAsObject(BB_Keys::Nearest_Player, TargetCharacter);
 	FVector const player_location = TargetCharacter->GetActorLocation();
 	FVector const player_direction = TargetCharacter->GetActorLocation() - zombie_location;
 	Controller->get_blackboard()->SetValueAsVector(BB_Keys::Player_Location, player_direction);
