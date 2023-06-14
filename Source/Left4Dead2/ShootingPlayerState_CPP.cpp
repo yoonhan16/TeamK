@@ -36,7 +36,7 @@ void AShootingPlayerState_CPP::SetCurHP(float NewHP)
 {
 	if (HasAuthority())
 	{
-		Server_SetCurHP(NewHP);
+		Server_SetCurHP(CurHP_CPP);
 	}
 	else
 	{
