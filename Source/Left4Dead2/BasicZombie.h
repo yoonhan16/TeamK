@@ -77,6 +77,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	ABasicZombie* BasicZombie_CPP;
 	ASystemChar* PlayerCharacter_CPP;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")

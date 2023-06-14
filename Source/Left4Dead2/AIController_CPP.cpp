@@ -54,7 +54,7 @@ UBlackboardComponent* AAIController_CPP::get_blackboard() const
 
 void AAIController_CPP::on_target_detected(AActor* actor, FAIStimulus const stimulus)
 {
-	if (auto const PlayerCharacter = Cast<ASystemChar>(actor))
+	if (actor && actor->IsA<ASystemChar>())
 	{
 		get_blackboard()->SetValueAsBool(BB_Keys::can_see_player, stimulus.WasSuccessfullySensed());
 	}

@@ -19,9 +19,8 @@ UBTTask_FindPlayerLocation::UBTTask_FindPlayerLocation(FObjectInitializer const&
 
 EBTNodeResult::Type UBTTask_FindPlayerLocation::ExecuteTask(UBehaviorTreeComponent& owner_comp, uint8* node_memory)
 {
-	
+	//int32 PlayerIndex[4] = { 0,1,2,3 };
 	// 플레이어 캐릭터 & AI Controller 가져오기 
-	ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 	auto const Controller = Cast<AAIController_CPP>(owner_comp.GetAIOwner());
 	auto const Enemy = Controller->GetCharacter();
 
@@ -31,8 +30,20 @@ EBTNodeResult::Type UBTTask_FindPlayerLocation::ExecuteTask(UBehaviorTreeCompone
 		BasicZombie->UpdateSpeed(700.0f);
 	}
 
+	double MinDistance = 0;
+
+	ACharacter* TargetCharacter = nullptr;
+
+	for (int32 i = 0; i < 4; i++)
+	{
+		ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), i);
+
+		TargetCharacter = PlayerCharacter;
+	}
+	//ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), *PlayerIndex);
+
 	// 플레이어 캐릭터의 위치 가져오기
-	FVector const player_location = PlayerCharacter->GetActorLocation();
+	FVector const player_location = TargetCharacter->GetActorLocation();
 	if (search_random)
 	{
 		FNavLocation NavLocation;
@@ -43,7 +54,6 @@ EBTNodeResult::Type UBTTask_FindPlayerLocation::ExecuteTask(UBehaviorTreeCompone
 		{
 			Controller->get_blackboard()->SetValueAsVector(BB_Keys::Target_Location, NavLocation.Location);
 		}
-
 	}
 	else
 	{

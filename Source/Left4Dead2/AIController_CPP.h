@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "SystemChar.h"
 #include "Perception/AIPerceptionTypes.h"
 #include "AIController_CPP.generated.h"
 
@@ -19,6 +20,8 @@ public:
 	AAIController_CPP(FObjectInitializer const& object_initializer = FObjectInitializer::Get());
 	void BeginPlay() override;
 	void OnPossess(APawn* const pawn) override;
+
+	ASystemChar* PlayerCharacter;
 
 	class UBlackboardComponent* get_blackboard() const;
 

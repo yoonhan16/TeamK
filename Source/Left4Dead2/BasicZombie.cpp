@@ -56,18 +56,28 @@ ABasicZombie::ABasicZombie()
 
 void ABasicZombie::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	//int32 PlayerIndex[4] = { 0,1,2,3 };
+	//ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), *PlayerIndex);
+
+	ACharacter* TargetCharacter = nullptr;
+
+	for (int32 i = 0; i < 4; i++)
+	{
+		ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), i);
+		
+		TargetCharacter = PlayerCharacter;
+	}
 
 	if (OtherActor != this)
 	{
-		if (OtherActor && PlayerCharacter && PlayerCharacter->IsA<ASystemChar>())
+		if (OtherActor && TargetCharacter && TargetCharacter->IsA<ASystemChar>())
 		{
 			HasOverlapped = true;
 			UE_LOG(LogTemp, Warning, TEXT("Begin Overlap : Called"));
 
 			do
 			{
-				UGameplayStatics::ApplyDamage(PlayerCharacter, 3.0f, ABasicZombie::GetController(), nullptr, NULL);
+				UGameplayStatics::ApplyDamage(TargetCharacter, 3.0f, ABasicZombie::GetController(), nullptr, NULL);
 
 				UE_LOG(LogTemp, Warning, TEXT("Damage Applied to Player : Called"));
 			} while (AttackTimer >= 0.8f);
@@ -77,10 +87,21 @@ void ABasicZombie::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* O
 
 void ABasicZombie::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+	//int32 PlayerIndex[4] = { 0,1,2,3 };
+	//ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), *PlayerIndex);
+
+	ACharacter* TargetCharacter = nullptr;
+
+	for (int32 i = 0; i < 4; i++)
+	{
+		ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), i);
+
+		TargetCharacter = PlayerCharacter;
+	}
+
 	if (OtherActor != this)
 	{
-		if (OtherActor && PlayerCharacter && PlayerCharacter->IsA<ASystemChar>())
+		if (OtherActor && TargetCharacter && TargetCharacter->IsA<ASystemChar>())
 		HasOverlapped = false;
 		UE_LOG(LogTemp, Warning, TEXT("End Overlap : Called"));
 	}
@@ -101,11 +122,22 @@ void ABasicZombie::BeginPlay()
 
 float ABasicZombie::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-	AController* const PlayerController = PlayerCharacter->GetController();
+	//int32 PlayerIndex[4] = { 0,1,2,3 };
+	//ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), *PlayerIndex);
+	//AController* const PlayerController = PlayerCharacter->GetController();
+
+	ACharacter* TargetCharacter = nullptr;
+
+	for (int32 i = 0; i < 4; i++)
+	{
+		ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), i);
+
+		TargetCharacter = PlayerCharacter;
+	}
+
 	Super::TakeDamage(Damage, DamageEvent, EventInstigator, DamageCauser);
 	
-	if (DamageCauser && PlayerCharacter && PlayerCharacter->IsA<ASystemChar>() && EventInstigator && PlayerController)
+	if (EventInstigator && TargetCharacter && TargetCharacter->IsA<ASystemChar>())
 	{
 		//UGameplayStatics::GetPlayerController(PlayerCharacter->GetController(), 0);
 		
