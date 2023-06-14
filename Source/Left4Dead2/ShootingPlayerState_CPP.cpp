@@ -19,12 +19,20 @@ void AShootingPlayerState_CPP::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 
 AShootingPlayerState_CPP::AShootingPlayerState_CPP()
 {
-	//Check_PlayerDeath();
+
 }
 
 void AShootingPlayerState_CPP::Server_SetCurHP_Implementation(float NewHP)
 {
 	CurHP_CPP = NewHP;
+	if (CurHP_CPP <= 0.0f)
+	{
+		Player_IsDead = true;
+	}
+	else
+	{
+		Player_IsDead = false;
+	}
 }
 
 bool AShootingPlayerState_CPP::Server_SetCurHP_Validate(float NewHP)
@@ -37,28 +45,30 @@ void AShootingPlayerState_CPP::SetCurHP(float NewHP)
 	if (HasAuthority())
 	{
 		Server_SetCurHP(CurHP_CPP);
+		if (CurHP_CPP <= 0.0f)
+		{
+			Player_IsDead = true;
+		}
+		else
+		{
+			Player_IsDead = false;
+		}
 	}
 	else
 	{
 		CurHP_CPP = NewHP;
+		if (CurHP_CPP <= 0.0f)
+		{
+			Player_IsDead = true;
+		}
+		else
+		{
+			Player_IsDead = false;
+		}
 	}
 }
 
-//void AShootingPlayerState_CPP::Check_PlayerDeath()
-//{
-//	Player_IsDead = (CurHP_CPP <= 0.0f);
-//
-//	auto Controller = Cast<AAIController_CPP>(GetOwner());
-//
-//	if (Player_IsDead)
-//	{
-//		Controller->get_blackboard()->SetValueAsBool(BB_Keys::IsDead, true);
-//	}
-//	else
-//	{
-//		Controller->get_blackboard()->SetValueAsBool(BB_Keys::IsDead, false);
-//	}
-//}
+
 
 
 
