@@ -3,6 +3,7 @@
 
 #include "BTTask_RotateToPlayerCharacter.h"
 #include "AIController_CPP.h"
+#include "ShootingPlayerState_CPP.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Runtime/NavigationSystem/Public/NavigationSystem.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
@@ -17,6 +18,8 @@
 UBTTask_RotateToPlayerCharacter::UBTTask_RotateToPlayerCharacter(FObjectInitializer const& object_initializer)
 {
 	NodeName = TEXT("RotateToPlayerCharacter_CPP");
+	BlackboardKey1.AddVectorFilter(this, GET_MEMBER_NAME_CHECKED(UBTTask_RotateToPlayerCharacter, BlackboardKey1));
+	BlackboardKey2.AddIntFilter(this, GET_MEMBER_NAME_CHECKED(UBTTask_RotateToPlayerCharacter, BlackboardKey2));
 }
 
 EBTNodeResult::Type UBTTask_RotateToPlayerCharacter::ExecuteTask(UBehaviorTreeComponent& owner_comp, uint8* node_memory)
@@ -27,33 +30,59 @@ EBTNodeResult::Type UBTTask_RotateToPlayerCharacter::ExecuteTask(UBehaviorTreeCo
 	FVector const zombie_location = Enemy->GetActorLocation();
 
 	double MinDistance = 0;
+	int32 NearestPlayerIndex = -1;
 
 	for (int32 i = 0; i < 4; i++)
 	{
 		// 가장 가까운 플레이어 위치 찾기
 		ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), i);
-		double CurrentDistance = FVector::Dist(PlayerCharacter->GetActorLocation(), zombie_location);
+		
+		if (PlayerCharacter)
+		{
+			AShootingPlayerState_CPP* PlayerState = PlayerCharacter->GetPlayerState<AShootingPlayerState_CPP>();
 
-		if (i == 0)
-		{
-			MinDistance = CurrentDistance;
-			TargetCharacter = PlayerCharacter;
-		}
-		else
-		{
-			if (CurrentDistance < MinDistance)
+			if (PlayerState && PlayerState->Player_IsDead == false)
 			{
-				TargetCharacter = PlayerCharacter;
+				double CurrentDistance = FVector::Dist(PlayerCharacter->GetActorLocation(), zombie_location);
+
+				if (i == 0)
+				{
+					MinDistance = CurrentDistance;
+					TargetCharacter = PlayerCharacter;
+					NearestPlayerIndex = i;
+				}
+				else
+				{
+					if (CurrentDistance < MinDistance)
+					{
+						TargetCharacter = PlayerCharacter;
+						NearestPlayerIndex = i;
+					}
+				}
 			}
+			//else
+			//{
+			//	FinishLatentTask(owner_comp, EBTNodeResult::Failed);
+			//	return EBTNodeResult::Failed;
+			//}
 		}
 	}
 
-
-	// 가장 가까운 플레이어 & 플레이어의 방향 추출
-	Controller->get_blackboard()->SetValueAsObject(BB_Keys::Nearest_Player, TargetCharacter);
-	FVector const player_location = TargetCharacter->GetActorLocation();
-	FVector const player_direction = TargetCharacter->GetActorLocation() - zombie_location;
-	Controller->get_blackboard()->SetValueAsVector(BB_Keys::Player_Location, player_direction);
+	if (TargetCharacter)
+	{
+		// 가장 가까운 플레이어 & 플레이어의 방향 & 플레이어 인덱스 추출
+		Controller->get_blackboard()->SetValueAsObject(BB_Keys::Nearest_Player, TargetCharacter);
+		FVector const player_location = TargetCharacter->GetActorLocation();
+		FVector const player_direction = TargetCharacter->GetActorLocation() - zombie_location;
+		Controller->get_blackboard()->SetValueAsVector(BB_Keys::Player_Location, player_direction);
+		Controller->get_blackboard()->SetValueAsInt(BB_Keys::Nearest_Index, NearestPlayerIndex);
+	}
+	else
+	{
+		Controller->get_blackboard()->ClearValue(BB_Keys::Nearest_Player);
+		Controller->get_blackboard()->ClearValue(BB_Keys::Player_Location);
+		Controller->get_blackboard()->ClearValue(BB_Keys::Nearest_Index);
+	}
 
 	FinishLatentTask(owner_comp, EBTNodeResult::Succeeded);
 	return EBTNodeResult::Succeeded;

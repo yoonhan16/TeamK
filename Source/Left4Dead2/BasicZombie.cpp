@@ -70,9 +70,11 @@ void ABasicZombie::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* O
 		TargetCharacter = PlayerCharacter;
 	}
 
-	if (OtherActor != this)
+	PlayerCharacter_CPP = Cast<ASystemChar>(OtherActor);
+
+	if (OtherActor != this && PlayerCharacter_CPP && OtherComp)
 	{
-		if (OtherActor && TargetCharacter && TargetCharacter->IsA<ASystemChar>())
+		if (TargetCharacter == PlayerCharacter_CPP)
 		{
 			HasOverlapped = true;
 			UE_LOG(LogTemp, Warning, TEXT("Begin Overlap : Called"));
@@ -97,9 +99,11 @@ void ABasicZombie::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* Oth
 		TargetCharacter = PlayerCharacter;
 	}
 
-	if (OtherActor != this)
+	PlayerCharacter_CPP = Cast<ASystemChar>(OtherActor);
+
+	if (OtherActor != this && PlayerCharacter_CPP && OtherComp)
 	{
-		if (OtherActor && TargetCharacter && TargetCharacter->IsA<ASystemChar>())
+		if (OtherActor && TargetCharacter && TargetCharacter->IsA<ASystemChar>() && TargetCharacter->ActorHasTag("Player") && OtherComp && OtherComp->IsSimulatingPhysics())
 		HasOverlapped = false;
 		UE_LOG(LogTemp, Warning, TEXT("End Overlap : Called"));
 	}
@@ -135,7 +139,7 @@ float ABasicZombie::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AC
 		
 		CurHP = CurHP - Damage;
 
-		//UE_LOG(LogTemp, Warning, TEXT("CurHP = CurHP - Damage : Called"));
+		UE_LOG(LogTemp, Warning, TEXT("CurHP = CurHP - Damage : Called"));
 		
 		if (CurHP <= 0.0f && flag == false)
 		{

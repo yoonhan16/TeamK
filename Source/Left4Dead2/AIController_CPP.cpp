@@ -57,19 +57,28 @@ void AAIController_CPP::on_target_detected(AActor* actor, FAIStimulus const stim
 {
 	if (actor && actor->IsA<ASystemChar>())
 	{
-		Detected_Actor++;
-		UE_LOG(LogTemp, Warning, TEXT("Detected_Actor : Added"));
-		UE_LOG(LogTemp, Warning, TEXT("Detected_Actor: %d"), Detected_Actor);
+
 		get_blackboard()->SetValueAsBool(BB_Keys::can_see_player, stimulus.WasSuccessfullySensed());
 
-		if (get_blackboard()->GetValueAsBool(BB_Keys::can_see_player) == false)
-		{
-			Detected_Actor--;
-			UE_LOG(LogTemp, Warning, TEXT("Detected_Actor : Subtracted"));
-			UE_LOG(LogTemp, Warning, TEXT("Detected_Actor: %d"), Detected_Actor);
-			stimulus.SensingFailed;
-		}
+		//PlayerCharacter = Cast<ASystemChar>(actor);
+		//PlayerState_CPP = PlayerCharacter->GetPlayerState<AShootingPlayerState_CPP>();
+
+		//if (PlayerState_CPP && !PlayerState_CPP->Player_IsDead)
+		//{
+		//	get_blackboard()->SetValueAsBool(BB_Keys::can_see_player, stimulus.WasSuccessfullySensed());
+		//	get_blackboard()->SetValueAsBool(BB_Keys::IsDead, false);
+		//}
+		//else
+		//{
+		//	get_blackboard()->SetValueAsBool(BB_Keys::can_see_player, false);
+		//	get_blackboard()->SetValueAsBool(BB_Keys::IsDead, true);
+		//}
 	}
+	//else
+	//{
+	//	get_blackboard()->SetValueAsBool(BB_Keys::can_see_player, false);
+	//}
+
 }
 
 void AAIController_CPP::setup_perception_system()
@@ -77,7 +86,7 @@ void AAIController_CPP::setup_perception_system()
 	// 시각 센서 세팅
 	sight_config = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config"));
 	SetPerceptionComponent(*CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("Perception Component")));
-	sight_config->SightRadius = 1000.0f;
+	sight_config->SightRadius = 1800.0f;
 	sight_config->LoseSightRadius = sight_config->SightRadius + 200.0f;
 	sight_config->PeripheralVisionAngleDegrees = 70.0f;
 	sight_config->SetMaxAge(5.0f);

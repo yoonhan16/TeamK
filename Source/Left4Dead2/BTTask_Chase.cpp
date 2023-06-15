@@ -16,6 +16,8 @@ EBTNodeResult::Type UBTTask_Chase::ExecuteTask(UBehaviorTreeComponent& owner_com
 {
 	// AI 컨트롤러를 통해 TargetLocation 가져오기
 	AAIController_CPP* const Controller = Cast<AAIController_CPP>(owner_comp.GetAIOwner());
+	auto const Enemy = Controller->GetCharacter();
+
 	FVector const player_location = Controller->get_blackboard()->GetValueAsVector(BB_Keys::Target_Location);
 
 	// 캐릭터 위치로 이동

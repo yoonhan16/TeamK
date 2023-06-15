@@ -15,6 +15,7 @@ void AShootingPlayerState_CPP::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME_CONDITION_NOTIFY(AShootingPlayerState_CPP, CurHP_CPP, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION(AShootingPlayerState_CPP, Player_IsDead, COND_None);
 }
 
 AShootingPlayerState_CPP::AShootingPlayerState_CPP()

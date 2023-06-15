@@ -32,8 +32,6 @@ EBTNodeResult::Type UBTTask_FindPlayerLocation::ExecuteTask(UBehaviorTreeCompone
 
 	ACharacter* TargetCharacter = (ACharacter*)Controller->get_blackboard()->GetValueAsObject(BB_Keys::Nearest_Player);
 
-	//ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), *PlayerIndex);
-
 	// 플레이어 캐릭터의 위치 가져오기
 	FVector const player_location = TargetCharacter->GetActorLocation();
 	if (search_random)

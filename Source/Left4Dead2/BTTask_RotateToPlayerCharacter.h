@@ -18,9 +18,16 @@ class LEFT4DEAD2_API UBTTask_RotateToPlayerCharacter : public UBTTask_Blackboard
 	
 public:
 
-	ACharacter* TargetCharacter;
-
 	UBTTask_RotateToPlayerCharacter(FObjectInitializer const& object_initializer);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blackboard")
+	FBlackboardKeySelector BlackboardKey1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blackboard")
+	FBlackboardKeySelector BlackboardKey2;
+
+
+
+	ACharacter* TargetCharacter;
 
 	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& owner_comp, uint8* node_memory) override;
 

@@ -24,7 +24,7 @@ public:
 	float MaxHP_CPP = 0.0f;
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Health", ReplicatedUsing = OnRep_CurHP_CPP)
 	float CurHP_CPP = 100.0f;
-	UPROPERTY(editAnyWhere, BlueprintReadWrite, Category = "Health")
+	UPROPERTY(editAnyWhere, BlueprintReadWrite, Category = "Health", Replicated)
 	bool Player_IsDead;
 
 
