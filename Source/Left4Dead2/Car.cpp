@@ -4,7 +4,7 @@
 #include "Car.h"
 #include "Components/BoxComponent.h"
 
-bool ACar::bIsHornSoundPlaying = false;
+//bool ACar::bIsHornSoundPlaying = false;
 
 // Sets default valu
 ACar::ACar()
@@ -38,14 +38,15 @@ void ACar::CarAlarm()
 {
     if (!bIsHornSoundPlaying)
     {
-        // 알람 소리의 최대 거리를 500 유닛으로 설정
         SetAlarmSoundAttenuation(2000.f);
+
+        UAudioComponent* AudioComponent = UGameplayStatics::SpawnSoundAtLocation(this, Sound, GetActorLocation());
 
         //UGameplayStatics::PlaySoundAtLocation(this, Sound, GetActorLocation(), 1.f);
         bIsHornSoundPlaying = true;
 
-        FTimerHandle TimerHandle;
-        GetWorldTimerManager().SetTimer(TimerHandle, this, &ACar::StopAlarm, AlarmTime, false);
+        /*FTimerHandle TimerHandle;
+        GetWorldTimerManager().SetTimer(TimerHandle, this, &ACar::StopAlarm, AlarmTime, false);*/
     }
 }
 
@@ -56,13 +57,11 @@ void ACar::SetAlarmSoundAttenuation(float MaxDistance)
         USoundAttenuation* AttenuationSettings = NewObject<USoundAttenuation>(this, USoundAttenuation::StaticClass());
         AttenuationSettings->Attenuation.FalloffDistance = MaxDistance;
         Sound->AttenuationSettings = AttenuationSettings;
-
-        UAudioComponent* AudioComponent = UGameplayStatics::SpawnSoundAtLocation(this, Sound, GetActorLocation());
     }
 }
 
-void ACar::StopAlarm()
-{
-    bIsHornSoundPlaying = false;
-}
+//void ACar::StopAlarm()
+//{
+//    bIsHornSoundPlaying = false;
+//}
 

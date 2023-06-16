@@ -40,24 +40,19 @@ void AGenerator::MyInteract_Implementation()
 {
 	if (HasAuthority())
 	{
-		GeneratorOn();
+		GeneratorSound();
+		
+		FTimerManager& TimerManager = GetWorldTimerManager();
+		
+		TimerManager.SetTimer(TimerHandle, this, &AGenerator::GeneratorOn, 120.f, false);
+		
+		TimerManager.SetTimer(TimerHandle, this, &AGenerator::CollapseFloorDelayed, 120.f, false);
+		UE_LOG(LogTemp, Warning, TEXT("The floor(1st) is Collapsed!"));
 
-		if (CollapsingFloor)
-		{
-			CollapsingFloor->FloorCollapsing();
-			UE_LOG(LogTemp, Warning, TEXT("The floor(1st) is Collapsed!"));
-		}
+		TimerManager.SetTimer(TimerHandle, this, &AGenerator::SetTaskCheckDelayed, 120.f, false);
+		UE_LOG(LogTemp, Warning, TEXT("TaskCheck"));
 
-		if (TaskCheck)
-		{
-			TaskCheck->SetTask(false);
-			UE_LOG(LogTemp, Warning, TEXT("TaskCheck"));
-		}
-
-		if (Elevator)
-		{
-			Elevator->LightOn();
-		}
+		TimerManager.SetTimer(TimerHandle, this, &AGenerator::LightOnDelayed, 120.f, false);
 	}
 }
 
@@ -69,5 +64,48 @@ void AGenerator::GeneratorOn()
 		{
 			Light->LightOn();
 		}
+	}
+}
+
+void AGenerator::CollapseFloorDelayed()
+{
+	if (CollapsingFloor)
+	{
+		CollapsingFloor->FloorCollapsing();
+		UE_LOG(LogTemp, Warning, TEXT("The floor(1st) is Collapsed!"));
+	}
+}
+
+void AGenerator::SetTaskCheckDelayed()
+{
+	if (TaskCheck)
+	{
+		TaskCheck->SetTask(false);
+		UE_LOG(LogTemp, Warning, TEXT("TaskCheck"));
+	}
+}
+
+void AGenerator::LightOnDelayed()
+{
+	if (Elevator)
+	{
+		Elevator->LightOn();
+	}
+}
+
+void AGenerator::GeneratorSound()
+{
+	GeneratorSoundAttenuation(1000.f);
+
+	AudioComponent = UGameplayStatics::SpawnSoundAtLocation(this, Sound, GetActorLocation());
+}
+
+void AGenerator::GeneratorSoundAttenuation(float MaxDistance)
+{
+	if (Sound)
+	{
+		AttenuationSettings = NewObject<USoundAttenuation>(this, USoundAttenuation::StaticClass());
+		AttenuationSettings->Attenuation.FalloffDistance = MaxDistance;
+		Sound->AttenuationSettings = AttenuationSettings;
 	}
 }

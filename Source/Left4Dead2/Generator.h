@@ -11,6 +11,8 @@
 #include "ElevatorButton.h"
 #include "Elevator.h"
 #include "Kismet/GameplayStatics.h"
+#include "TimerManager.h"
+#include "AudioDevice.h"
 #include "Generator.generated.h"
 
 class ACeilingLight;
@@ -42,6 +44,15 @@ public:
 	virtual void MyInteract_Implementation() override;
 
 	void GeneratorOn();
+	void CollapseFloorDelayed();
+	void SetTaskCheckDelayed();
+	void LightOnDelayed();
+
+	UFUNCTION(BlueprintCallable, Category = "Sound")
+	void GeneratorSound();
+
+	UFUNCTION(BlueprintCallable, Category = "Sound")
+	void GeneratorSoundAttenuation(float MaxDistance);
 
 private:
 	UPROPERTY(BlueprintReadWrite, EditInstanceOnly, meta = (AllowPrivateAccess = true))
@@ -52,5 +63,17 @@ private:
 	AElevatorButton* TaskCheck;
 	UPROPERTY(BlueprintReadWrite, EditInstanceOnly, meta = (AllowPrivateAccess = true))
 	AElevator* Elevator;
+
+	FTimerHandle TimerHandle;
+
+protected:
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundWave* Sound;
+
+	UPROPERTY(VisibleAnywhere, Category = "Sound")
+	UAudioComponent* AudioComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Sound")
+	USoundAttenuation* AttenuationSettings;
 };
 

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Kismet/GameplayStatics.h"
 #include "Glass.generated.h"
 
 UCLASS()
@@ -23,16 +24,30 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UFUNCTION(BlueprintCallable, Category = "Sound")
+	void GlassBreak();
+	UFUNCTION(BlueprintCallable, Category = "Sound")
+	void SetBreakSoundAttenuation(float MaxDistance);
+
 private:
 
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-		class UStaticMeshComponent* Glass;
+	class UStaticMeshComponent* Glass;
 	UPROPERTY(VisibleAnywhere, Category = "Collision")
-		class UBoxComponent* BoxCollision;
+	class UBoxComponent* BoxCollision;
 
 protected:
 
 	UFUNCTION()
 		void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundWave* Sound;
+
+	UPROPERTY(VisibleAnywhere, Category = "Sound")
+	UAudioComponent* AudioComponent;
+	
+	UPROPERTY(VisibleAnywhere, Category = "Sound")
+	USoundAttenuation* AttenuationSettings;
 
 };

@@ -2,7 +2,6 @@
 
 
 #include "Glass.h"
-//#include "Juno_CPPCharacter.h"
 #include "Components/BoxComponent.h"
 
 // Sets default values
@@ -32,9 +31,26 @@ void AGlass::Tick(float DeltaTime)
 
 }
 
+void AGlass::GlassBreak()
+{
+	SetBreakSoundAttenuation(1000.f);
+	AudioComponent = UGameplayStatics::SpawnSoundAtLocation(this, Sound, GetActorLocation());
+}
+
+void AGlass::SetBreakSoundAttenuation(float MaxDistance)
+{
+	if (Sound)
+	{
+		AttenuationSettings = NewObject<USoundAttenuation>(this, USoundAttenuation::StaticClass());
+		AttenuationSettings->Attenuation.FalloffDistance = MaxDistance;
+		Sound->AttenuationSettings = AttenuationSettings;
+	}
+}
+
 void AGlass::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	GlassBreak();
 	Destroy();
-
+	
 }
 

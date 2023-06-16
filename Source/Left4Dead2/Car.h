@@ -32,10 +32,10 @@ public:
 	void SetAlarmSoundAttenuation(float MaxDistance);
 
 private:
-	static bool bIsHornSoundPlaying;
+	bool bIsHornSoundPlaying;
 
-	UFUNCTION()
-	void StopAlarm();
+	//UFUNCTION()
+	//void StopAlarm();
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
