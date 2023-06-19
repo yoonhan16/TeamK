@@ -17,6 +17,7 @@
 
 UBTTask_RotateToPlayerCharacter::UBTTask_RotateToPlayerCharacter(FObjectInitializer const& object_initializer)
 {
+	// 노드 이름 설정 & 추가로 설정할 블랙보드 키의 필터 설정
 	NodeName = TEXT("RotateToPlayerCharacter_CPP");
 	BlackboardKey1.AddVectorFilter(this, GET_MEMBER_NAME_CHECKED(UBTTask_RotateToPlayerCharacter, BlackboardKey1));
 	BlackboardKey2.AddIntFilter(this, GET_MEMBER_NAME_CHECKED(UBTTask_RotateToPlayerCharacter, BlackboardKey2));
@@ -34,7 +35,7 @@ EBTNodeResult::Type UBTTask_RotateToPlayerCharacter::ExecuteTask(UBehaviorTreeCo
 
 	for (int32 i = 0; i < 4; i++)
 	{
-		// 가장 가까운 플레이어 위치 찾기
+		// 가장 가까운 플레이어 위치 & 인덱스 찾기
 		ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), i);
 		
 		if (PlayerCharacter)
@@ -79,11 +80,13 @@ EBTNodeResult::Type UBTTask_RotateToPlayerCharacter::ExecuteTask(UBehaviorTreeCo
 	}
 	else
 	{
+		// 블랙보드 키 데이터 초기화
 		Controller->get_blackboard()->ClearValue(BB_Keys::Nearest_Player);
 		Controller->get_blackboard()->ClearValue(BB_Keys::Player_Location);
 		Controller->get_blackboard()->ClearValue(BB_Keys::Nearest_Index);
 	}
 
+	// 성공으로 Task 종료
 	FinishLatentTask(owner_comp, EBTNodeResult::Succeeded);
 	return EBTNodeResult::Succeeded;
 }

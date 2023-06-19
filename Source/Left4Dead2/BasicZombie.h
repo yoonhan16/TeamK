@@ -27,29 +27,36 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Variable")
 	float CurHP = 0.0f;
 
+	// Overlap 이벤트가 활성화 되었을 때 AttackTimer를 활성화
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Variable")
 	bool HasOverlapped = false;
 
+	// 체력이 0.0f 일 때 사용 ( 2초간 Ragdoll 이후 Destroy) 
 	UPROPERTY(EditAnywhere, BlueprintReadwrite, Replicated, Category = "Variable")
 	float Timer = 0.0f;
 
+	// Overlap Begin 이 활성화 되었을 때 (1초에 1번 데미지 부여)
 	UPROPERTY(EditAnywhere, BlueprintReadwrite, Replicated, Category = "Variable")
 	float AttackTimer = 0.0f;
 
+	// 체력이 0.0f 일 때 Timer를 활성화
 	UPROPERTY(EditAnywhere, BlueprintReadwrite, Replicated, Category = "Variable")
 	bool StartCount = false;
 
+	// 타이머를 1번만 활성화 하기 위한 bool 변수
 	UPROPERTY(EditAnywhere, BlueprintReadwrite, Replicated, Category = "Variable")
 	bool flag = false;
 
+	// 서버 & 클라이언트에서 CheckHP 함수 호출
 	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_CheckHP(bool CheckCount, bool Checkflag);
-
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_CheckHP(bool CheckCount, bool Checkflag);
 
+	// BasicZombie가 죽었는지 확인
 	void CheckHP(bool CheckCount, bool Checkflag);
 
+	// 플레이어를 인지했을 때 MaxWalkSpeed 변화를 위한 함수
 	UFUNCTION(BlueprintCallable, Category = "Function")
 	void UpdateSpeed(UPARAM(DisplayName = "Speed") float Speed);
 
@@ -59,8 +66,8 @@ public:
 	UFUNCTION()
 	void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
-	int32 ID = 0;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	//int32 ID = 0;
 
 	//virtual FGenericTeamId GetGenericTeamId() const override;
 

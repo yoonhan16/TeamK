@@ -19,6 +19,7 @@
 
 AAIController_CPP::AAIController_CPP(FObjectInitializer const& object_initializer)
 {
+	// BehaviorTree 하드코딩
 	static ConstructorHelpers::FObjectFinder<UBehaviorTree> Tree_obj(TEXT("BehaviorTree'/Game/TEAM_K/Left4Dead/KIM_YoonHan/Behaviour_Tree/BehaviorTree_BasicZombie.BehaviorTree_BasicZombie'"));
 
 	if (Tree_obj.Succeeded())
@@ -44,10 +45,11 @@ void AAIController_CPP::OnPossess(APawn* const pawn)
 	Super::OnPossess(pawn);
 	if (blackboard)
 	{
+		// BehaviorTree가 가진 Blackboard 실행
 		blackboard->InitializeBlackboard(*bTree->BlackboardAsset);
 	}
 }
-
+// cpp 내에서 블랙보드 키값 설정을 위한 함수
 UBlackboardComponent* AAIController_CPP::get_blackboard() const
 {
 	return blackboard;
@@ -55,9 +57,10 @@ UBlackboardComponent* AAIController_CPP::get_blackboard() const
 
 void AAIController_CPP::on_target_detected(AActor* actor, FAIStimulus const stimulus)
 {
+	// Actor 가 ASystemChar 클래스인지 확인
 	if (actor && actor->IsA<ASystemChar>())
 	{
-
+		
 		get_blackboard()->SetValueAsBool(BB_Keys::can_see_player, stimulus.WasSuccessfullySensed());
 
 		//PlayerCharacter = Cast<ASystemChar>(actor);

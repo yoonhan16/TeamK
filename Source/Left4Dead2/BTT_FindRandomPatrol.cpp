@@ -11,6 +11,7 @@
 
 UBTT_FindRandomPatrol::UBTT_FindRandomPatrol(FObjectInitializer const& object_initializer)
 {
+	//노드 이름 설정
 	NodeName = TEXT("FindRandomPatrol_CPP");
 }
 

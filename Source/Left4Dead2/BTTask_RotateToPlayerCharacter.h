@@ -20,6 +20,7 @@ public:
 
 	UBTTask_RotateToPlayerCharacter(FObjectInitializer const& object_initializer);
 
+	// Additional Blackboard Key
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blackboard")
 	FBlackboardKeySelector BlackboardKey1;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Blackboard")

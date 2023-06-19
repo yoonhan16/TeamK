@@ -3,6 +3,8 @@
 #include "Runtime/Core/Public/UObject/NameTypes.h"
 #include "Runtime/Core/Public/Containers/UnrealString.h"
 
+// 블랙보드 키 입력
+
 namespace BB_Keys
 {
 	TCHAR const* const Target_Location = TEXT("Target_Location");

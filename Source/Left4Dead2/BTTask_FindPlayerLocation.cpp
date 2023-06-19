@@ -15,6 +15,7 @@
 
 UBTTask_FindPlayerLocation::UBTTask_FindPlayerLocation(FObjectInitializer const& object_initializer)
 {
+	// 노드 이름 설정
 	NodeName = TEXT("FindPlayerLocation_CPP");
 }
 
@@ -29,7 +30,7 @@ EBTNodeResult::Type UBTTask_FindPlayerLocation::ExecuteTask(UBehaviorTreeCompone
 		BasicZombie = Cast<ABasicZombie>(Enemy);
 		BasicZombie->UpdateSpeed(700.0f);
 	}
-
+	// 가장 가까운 플레이어 가져오기
 	ACharacter* TargetCharacter = (ACharacter*)Controller->get_blackboard()->GetValueAsObject(BB_Keys::Nearest_Player);
 
 	// 플레이어 캐릭터의 위치 가져오기
@@ -38,8 +39,10 @@ EBTNodeResult::Type UBTTask_FindPlayerLocation::ExecuteTask(UBehaviorTreeCompone
 	{
 		FNavLocation NavLocation;
 
-		// 내비게이션 시스템 가저오기 & 내비메쉬 위의 플레이어 캐릭터 근처로 이동
+		// 월드에 배치된 내비메쉬 가저오기 & 내비메쉬 위의 플레이어 캐릭터 근처로 이동
 		UNavigationSystemV1* const nav_system = UNavigationSystemV1::GetCurrent(GetWorld());
+
+		// 플레이어가 시야 밖으로 벗어났을 때
 		if (nav_system->GetRandomPointInNavigableRadius(player_location, search_radius, NavLocation, nullptr))
 		{
 			Controller->get_blackboard()->SetValueAsVector(BB_Keys::Target_Location, NavLocation.Location);
@@ -47,9 +50,11 @@ EBTNodeResult::Type UBTTask_FindPlayerLocation::ExecuteTask(UBehaviorTreeCompone
 	}
 	else
 	{
+		// 플레이어가 시야 안에 있을 때
 		Controller->get_blackboard()->SetValueAsVector(BB_Keys::Target_Location, player_location);
 	}
 
+	// 성공으로 Task 종료
 	FinishLatentTask(owner_comp, EBTNodeResult::Succeeded);
 	return EBTNodeResult::Succeeded;
 }

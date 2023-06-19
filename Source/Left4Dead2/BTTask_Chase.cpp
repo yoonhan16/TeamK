@@ -9,6 +9,7 @@
 
 UBTTask_Chase::UBTTask_Chase(FObjectInitializer const& object_initializer)
 {
+	// 노드 이름 설정
 	NodeName = TEXT("BTTTask_Chase_CPP");
 }
 

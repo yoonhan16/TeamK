@@ -12,6 +12,7 @@
 #include "Runtime/Engine/Public/TimerManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+// Replicate 할 변수 설정
 void ABasicZombie::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -29,14 +30,19 @@ ABasicZombie::ABasicZombie()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	bUseControllerRotationYaw = false;
-	GetCharacterMovement()->bOrientRotationToMovement = true;
 
+	// 컨트롤러 요 미사용
+	bUseControllerRotationYaw = false;
+
+	// 움직이는 방향으로 회전
+	GetCharacterMovement()->bOrientRotationToMovement = true;
 
 	ActorHasTag("Zombie");
 
+	// 자동으로 AI Controller 주입
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
+	// 기본 틀 제작
 	Body = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BODY"));
 	Body->SetupAttachment(GetMesh());
 
@@ -62,7 +68,6 @@ ABasicZombie::ABasicZombie()
 
 void ABasicZombie::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-
 	for (int32 i = 0; i < 4; i++)
 	{
 		ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), i);
@@ -91,7 +96,6 @@ void ABasicZombie::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* O
 
 void ABasicZombie::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-
 	for (int32 i = 0; i < 4; i++)
 	{
 		ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), i);
@@ -107,7 +111,6 @@ void ABasicZombie::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* Oth
 		HasOverlapped = false;
 		UE_LOG(LogTemp, Warning, TEXT("End Overlap : Called"));
 	}
-
 }
 
 //FGenericTeamId ABP_Basic_Zombie::GetGenericTeamId() const
@@ -124,7 +127,6 @@ void ABasicZombie::BeginPlay()
 
 float ABasicZombie::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-
 	for (int32 i = 0; i < 4; i++)
 	{
 		ACharacter* const PlayerCharacter = UGameplayStatics::GetPlayerCharacter(GetWorld(), i);
@@ -150,7 +152,6 @@ float ABasicZombie::TakeDamage(float Damage, FDamageEvent const& DamageEvent, AC
 			CheckHP(StartCount, flag);
 		}
 	}
-
 	return 0.0f;
 }
 
@@ -187,7 +188,6 @@ void ABasicZombie::Tick(float DeltaTime)
 void ABasicZombie::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
 bool ABasicZombie::Server_CheckHP_Validate(bool CheckCount, bool Checkflag)
