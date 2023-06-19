@@ -40,7 +40,7 @@ void AGenerator::MyInteract_Implementation()
 {
 	if (HasAuthority())
 	{
-		GeneratorSound();
+		//GeneratorSound();
 		
 		FTimerManager& TimerManager = GetWorldTimerManager();
 		
@@ -93,19 +93,19 @@ void AGenerator::LightOnDelayed()
 	}
 }
 
-void AGenerator::GeneratorSound()
-{
-	GeneratorSoundAttenuation(1000.f);
+//void AGenerator::GeneratorSound()
+//{
+//	GeneratorSoundAttenuation(1000.f);
+//
+//	AudioComponent = UGameplayStatics::SpawnSoundAtLocation(this, Sound, GetActorLocation());
+//}
 
-	AudioComponent = UGameplayStatics::SpawnSoundAtLocation(this, Sound, GetActorLocation());
-}
-
-void AGenerator::GeneratorSoundAttenuation(float MaxDistance)
-{
-	if (Sound)
-	{
-		AttenuationSettings = NewObject<USoundAttenuation>(this, USoundAttenuation::StaticClass());
-		AttenuationSettings->Attenuation.FalloffDistance = MaxDistance;
-		Sound->AttenuationSettings = AttenuationSettings;
-	}
-}
+//void AGenerator::GeneratorSoundAttenuation(float MaxDistance)
+//{
+//	if (Sound)
+//	{
+//		AttenuationSettings = NewObject<USoundAttenuation>(this, USoundAttenuation::StaticClass());
+//		AttenuationSettings->Attenuation.FalloffDistance = MaxDistance;
+//		Sound->AttenuationSettings = AttenuationSettings;
+//	}
+//}

@@ -48,11 +48,11 @@ public:
 	void SetTaskCheckDelayed();
 	void LightOnDelayed();
 
-	UFUNCTION(BlueprintCallable, Category = "Sound")
-	void GeneratorSound();
+	//UFUNCTION(BlueprintCallable, Category = "Sound")
+	//void GeneratorSound();
 
-	UFUNCTION(BlueprintCallable, Category = "Sound")
-	void GeneratorSoundAttenuation(float MaxDistance);
+	//UFUNCTION(BlueprintCallable, Category = "Sound")
+	//void GeneratorSoundAttenuation(float MaxDistance);
 
 private:
 	UPROPERTY(BlueprintReadWrite, EditInstanceOnly, meta = (AllowPrivateAccess = true))
