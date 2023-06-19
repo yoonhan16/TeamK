@@ -45,7 +45,7 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated)
-	bool bDidTask = true;
+	bool bDidTask;
 
 private:
 	UPROPERTY(BlueprintReadWrite, EditInstanceOnly, meta = (AllowPrivateAccess = true))

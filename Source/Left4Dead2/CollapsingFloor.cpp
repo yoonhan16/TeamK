@@ -49,12 +49,14 @@ bool ACollapsingFloor::Server_FloorCollapsing_Validate()
 	return true;
 }
 
+// 바닥이 사라지는 함수
 void ACollapsingFloor::Multicast_FloorCollapsing_Implementation()
 {
 	Floor->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Floor->SetVisibility(false);
 }
 
+// 리플리케이션 프로퍼티 정의
 void ACollapsingFloor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

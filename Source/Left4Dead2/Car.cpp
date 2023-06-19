@@ -4,8 +4,6 @@
 #include "Car.h"
 #include "Components/BoxComponent.h"
 
-//bool ACar::bIsHornSoundPlaying = false;
-
 // Sets default valu
 ACar::ACar()
 {
@@ -17,7 +15,9 @@ ACar::ACar()
 
     // 초기화되지 않은 멤버 변수 초기화
     Sound = nullptr;
-    AlarmTime = 0.0f;
+
+    bReplicates = true;
+    bAlwaysRelevant = true;
 }
 
 // Called when the game starts or when spawned
@@ -36,20 +36,33 @@ void ACar::Tick(float DeltaTime)
 
 void ACar::CarAlarm()
 {
+    Server_CarAlarm();
+}
+
+void ACar::Server_CarAlarm_Implementation()
+{
+    NetMulticast_CarAlarm();
+}
+
+bool ACar::Server_CarAlarm_Validate()
+{
+    return true;
+}
+
+void ACar::NetMulticast_CarAlarm_Implementation()
+{
     if (!bIsHornSoundPlaying)
     {
         SetAlarmSoundAttenuation(2000.f);
 
         UAudioComponent* AudioComponent = UGameplayStatics::SpawnSoundAtLocation(this, Sound, GetActorLocation());
 
-        //UGameplayStatics::PlaySoundAtLocation(this, Sound, GetActorLocation(), 1.f);
+        // 소리가 한 번만 실행하도록 bool값 설정
         bIsHornSoundPlaying = true;
-
-        /*FTimerHandle TimerHandle;
-        GetWorldTimerManager().SetTimer(TimerHandle, this, &ACar::StopAlarm, AlarmTime, false);*/
     }
 }
 
+// 액터로부터 거리가 멀어질수록 소리 감쇠
 void ACar::SetAlarmSoundAttenuation(float MaxDistance)
 {
     if (Sound)
@@ -60,8 +73,9 @@ void ACar::SetAlarmSoundAttenuation(float MaxDistance)
     }
 }
 
-//void ACar::StopAlarm()
-//{
-//    bIsHornSoundPlaying = false;
-//}
+void ACar::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+    DOREPLIFETIME(ACar, Sound);
+}

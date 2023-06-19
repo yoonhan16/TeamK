@@ -99,6 +99,7 @@ void AElevator::MyInteract_Implementation()
 	{
 		CloseDoor();
 
+		// 타이머 설정을 통한 함수 실행에 딜레이 효과
 		GetWorldTimerManager().SetTimer(TimerHandle1, this, &AElevator::GoUp, 2.f, false);
 
 		GetWorldTimerManager().SetTimer(TimerHandle2, this, &AElevator::OpenDoor, 12.f, false);
@@ -191,6 +192,7 @@ bool AElevator::Server_LightOff_Validate()
 	return true;
 }
 
+// 불 끄는 함수
 void AElevator::Multicast_LightOff_Implementation()
 {
 	Light1->SetVisibility(false);
@@ -213,6 +215,7 @@ bool AElevator::Server_LightOn_Validate()
 	return true;
 }
 
+// 불 켜는 함수
 void AElevator::Multicast_LightOn_Implementation()
 {
 	Light1->SetVisibility(true);
@@ -220,6 +223,7 @@ void AElevator::Multicast_LightOn_Implementation()
 	UE_LOG(LogTemp, Warning, TEXT("Elevator Light's on."));
 }
 
+// 리플리케이션 프로퍼티 정의
 void AElevator::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

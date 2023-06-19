@@ -32,6 +32,8 @@ void ADoor::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// TimelineProgress 이벤트에 ControlDoor 함수를 연결
+	// DoorTimeline이 CurveFloat에 따라 진행 상태를 변경, ControlDoor 함수 호출
 	if (CurveFloat)
 	{
 		FOnTimelineFloat TimelineProgress;
@@ -74,6 +76,7 @@ bool ADoor::Server_OpenDoor_Validate()
 	return true;
 }
 
+// 문의 상태를 업데이트하고, DoorTimeline 애니메이션을 재생 또는 역재생
 void ADoor::MulticastSyncDoorState_Implementation(bool bNewDoorState)
 {
 	bIsOpen = bNewDoorState;
@@ -95,11 +98,13 @@ void ADoor::MulticastSyncDoorState_Implementation(bool bNewDoorState)
 	bIsOpen = !bIsOpen;
 }
 
+// bIsOpen 변수가 변경될 때 호출되는 RepNotify 함수
 void ADoor::OnRep_bIsOpen()
 {
 	MulticastSyncDoorState(bIsOpen);
 }
 
+// 리플리케이션 프로퍼티 정의
 void ADoor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

@@ -33,18 +33,33 @@ void AGlass::Tick(float DeltaTime)
 
 void AGlass::GlassBreak()
 {
-	SetBreakSoundAttenuation(1000.f);
-	AudioComponent = UGameplayStatics::SpawnSoundAtLocation(this, Sound, GetActorLocation());
+	Server_GlassBreak();
 }
 
 void AGlass::SetBreakSoundAttenuation(float MaxDistance)
 {
 	if (Sound)
 	{
-		AttenuationSettings = NewObject<USoundAttenuation>(this, USoundAttenuation::StaticClass());
+		USoundAttenuation* AttenuationSettings = NewObject<USoundAttenuation>(this, USoundAttenuation::StaticClass());
 		AttenuationSettings->Attenuation.FalloffDistance = MaxDistance;
 		Sound->AttenuationSettings = AttenuationSettings;
 	}
+}
+
+void AGlass::Server_GlassBreak_Implementation()
+{
+	NetMulticast_GlassBreak();
+}
+
+bool AGlass::Server_GlassBreak_Validate()
+{
+	return true;
+}
+
+void AGlass::NetMulticast_GlassBreak_Implementation()
+{
+	SetBreakSoundAttenuation(1000.f);
+	UAudioComponent* AudioComponent = UGameplayStatics::SpawnSoundAtLocation(this, Sound, GetActorLocation());
 }
 
 void AGlass::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -52,5 +67,12 @@ void AGlass::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherAc
 	GlassBreak();
 	Destroy();
 	
+}
+
+void AGlass::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AGlass, Sound);
 }
 

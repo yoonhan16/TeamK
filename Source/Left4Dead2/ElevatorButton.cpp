@@ -25,6 +25,7 @@ void AElevatorButton::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// OutArray 배열에 레벨 위에 있는 모든 전등 액터들 저장
 	TArray<AActor*> OutArray;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACeilingLight::StaticClass(), OutArray);
 	for (AActor* Actor : OutArray)
@@ -32,6 +33,7 @@ void AElevatorButton::BeginPlay()
 		LightArray.Add(Cast<ACeilingLight>(Actor));
 	}
 
+	bDidTask = false;
 }
 
 // Called every frame
@@ -43,7 +45,9 @@ void AElevatorButton::Tick(float DeltaTime)
 
 void AElevatorButton::MyInteract_Implementation()
 {
-	if (bDidTask)
+	// bDidTask를 검사하여 거짓일 경우 LightArray에 저장된 전등 액터들을 끄고 바닥을 사라지게 함
+	// 참일 경우 엘리베이터 문 정상 작동
+	if (!bDidTask)
 	{
 		if (LightArray.Num() > 0)
 		{
@@ -82,6 +86,7 @@ void AElevatorButton::SetTask(bool bFlag)
 
 }
 
+// 리플리케이션 프로퍼티 정의
 void AElevatorButton::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

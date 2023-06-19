@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Kismet/GameplayStatics.h"
 #include "AudioDevice.h"
+#include "Net/UnrealNetwork.h"
 #include "Car.generated.h"
 
 UCLASS()
@@ -34,17 +35,18 @@ public:
 private:
 	bool bIsHornSoundPlaying;
 
-	//UFUNCTION()
-	//void StopAlarm();
-
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	class UStaticMeshComponent* Car;
 
-	UPROPERTY(EditAnywhere, Category = "Sound")
+	UFUNCTION(Server, Reliable, WithValidation, Category = "Sound")
+	void Server_CarAlarm();
+	UFUNCTION(NetMulticast, Reliable, Category = "Sound")
+	void NetMulticast_CarAlarm();
+
+	UPROPERTY(EditAnywhere, Category = "Sound", Replicated)
 	USoundWave* Sound;
 
-	UPROPERTY(EditAnywhere, Category = "Sound")
-	float AlarmTime;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 };

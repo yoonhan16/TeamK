@@ -21,6 +21,7 @@ void AGenerator::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// OutArray 배열에 레벨 위에 있는 모든 전등 액터들 저장
 	TArray<AActor*> OutArray;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACeilingLight::StaticClass(), OutArray);
 	for (AActor* Actor : OutArray)
@@ -40,8 +41,9 @@ void AGenerator::MyInteract_Implementation()
 {
 	if (HasAuthority())
 	{
-		//GeneratorSound();
-		
+		GeneratorSound();
+
+		// 발전기에 상호작용 시 2분 후에 탈출에 필요한 함수들이 실행되도록 타이머 설정
 		FTimerManager& TimerManager = GetWorldTimerManager();
 		
 		TimerManager.SetTimer(TimerHandle, this, &AGenerator::GeneratorOn, 120.f, false);
@@ -56,6 +58,7 @@ void AGenerator::MyInteract_Implementation()
 	}
 }
 
+// 전등을 켜는 함수
 void AGenerator::GeneratorOn()
 {
 	if (LightArray.Num() > 0)
@@ -80,7 +83,7 @@ void AGenerator::SetTaskCheckDelayed()
 {
 	if (TaskCheck)
 	{
-		TaskCheck->SetTask(false);
+		TaskCheck->SetTask(true);
 		UE_LOG(LogTemp, Warning, TEXT("TaskCheck"));
 	}
 }
@@ -93,19 +96,42 @@ void AGenerator::LightOnDelayed()
 	}
 }
 
-//void AGenerator::GeneratorSound()
-//{
-//	GeneratorSoundAttenuation(1000.f);
-//
-//	AudioComponent = UGameplayStatics::SpawnSoundAtLocation(this, Sound, GetActorLocation());
-//}
+void AGenerator::GeneratorSound()
+{
+	Server_GeneratorSound();
+}
 
-//void AGenerator::GeneratorSoundAttenuation(float MaxDistance)
-//{
-//	if (Sound)
-//	{
-//		AttenuationSettings = NewObject<USoundAttenuation>(this, USoundAttenuation::StaticClass());
-//		AttenuationSettings->Attenuation.FalloffDistance = MaxDistance;
-//		Sound->AttenuationSettings = AttenuationSettings;
-//	}
-//}
+void AGenerator::Server_GeneratorSound_Implementation()
+{
+	NetMulticast_GeneratorSound();
+}
+
+bool AGenerator::Server_GeneratorSound_Validate()
+{
+	return true;
+}
+
+void AGenerator::NetMulticast_GeneratorSound_Implementation()
+{
+	GeneratorSoundAttenuation(5000.f);
+
+	UAudioComponent* AudioComponent = UGameplayStatics::SpawnSoundAtLocation(this, Sound, GetActorLocation());
+}
+
+// 액터로부터 거리가 멀어질수록 소리 감쇠
+void AGenerator::GeneratorSoundAttenuation(float MaxDistance)
+{
+	if (Sound)
+	{
+		USoundAttenuation* AttenuationSettings = NewObject<USoundAttenuation>(this, USoundAttenuation::StaticClass());
+		AttenuationSettings->Attenuation.FalloffDistance = MaxDistance;
+		Sound->AttenuationSettings = AttenuationSettings;
+	}
+}
+
+void AGenerator::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AGenerator, Sound);
+}

@@ -79,6 +79,7 @@ void ACeilingLight::Multicast_LightOn_Implementation()
 	Light->SetVisibility(true);
 }
 
+// 리플리케이션 프로퍼티 정의
 void ACeilingLight::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);

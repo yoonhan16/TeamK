@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 #include "Glass.generated.h"
 
 UCLASS()
@@ -37,17 +38,16 @@ private:
 	class UBoxComponent* BoxCollision;
 
 protected:
+	UFUNCTION(Server, Reliable, WithValidation, Category = "Sound")
+	void Server_GlassBreak();
+	UFUNCTION(NetMulticast, Reliable, Category = "Sound")
+	void NetMulticast_GlassBreak();
 
 	UFUNCTION()
-		void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void OnBeginOverlap(UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	UPROPERTY(EditAnywhere, Category = "Sound")
+	UPROPERTY(EditAnywhere, Category = "Sound", Replicated)
 	USoundWave* Sound;
 
-	UPROPERTY(VisibleAnywhere, Category = "Sound")
-	UAudioComponent* AudioComponent;
-	
-	UPROPERTY(VisibleAnywhere, Category = "Sound")
-	USoundAttenuation* AttenuationSettings;
-
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

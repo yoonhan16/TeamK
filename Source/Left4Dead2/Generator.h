@@ -13,6 +13,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
 #include "AudioDevice.h"
+#include "Net/UnrealNetwork.h"
 #include "Generator.generated.h"
 
 class ACeilingLight;
@@ -48,11 +49,11 @@ public:
 	void SetTaskCheckDelayed();
 	void LightOnDelayed();
 
-	//UFUNCTION(BlueprintCallable, Category = "Sound")
-	//void GeneratorSound();
+	UFUNCTION(BlueprintCallable, Category = "Sound")
+	void GeneratorSound();
 
-	//UFUNCTION(BlueprintCallable, Category = "Sound")
-	//void GeneratorSoundAttenuation(float MaxDistance);
+	UFUNCTION(BlueprintCallable, Category = "Sound")
+	void GeneratorSoundAttenuation(float MaxDistance);
 
 private:
 	UPROPERTY(BlueprintReadWrite, EditInstanceOnly, meta = (AllowPrivateAccess = true))
@@ -67,13 +68,14 @@ private:
 	FTimerHandle TimerHandle;
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Sound")
+	UFUNCTION(Server, Reliable, WithValidation, Category = "Sound")
+	void Server_GeneratorSound();
+	UFUNCTION(NetMulticast, Reliable, Category = "Sound")
+	void NetMulticast_GeneratorSound();
+
+	UPROPERTY(EditAnywhere, Category = "Sound", Replicated)
 	USoundWave* Sound;
 
-	UPROPERTY(VisibleAnywhere, Category = "Sound")
-	UAudioComponent* AudioComponent;
-
-	UPROPERTY(VisibleAnywhere, Category = "Sound")
-	USoundAttenuation* AttenuationSettings;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };
 
