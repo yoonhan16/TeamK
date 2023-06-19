@@ -25,7 +25,7 @@ public:
 	// Sets default values for this actor's properties
 	AElevatorButton();
 
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
 	class UStaticMeshComponent* Button;
 	UPROPERTY(VisibleAnywhere, Category = "Collision")
 	class UBoxComponent* BoxCollision;

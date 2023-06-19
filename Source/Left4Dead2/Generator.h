@@ -29,7 +29,7 @@ public:
 	// Sets default values for this actor's properties
 	AGenerator();
 
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh")
 	class UStaticMeshComponent* Generator;
 	UPROPERTY(VisibleAnywhere, Category = "BoxCollision")
 	class UBoxComponent* BoxCollision;
