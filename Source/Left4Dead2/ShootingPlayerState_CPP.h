@@ -21,10 +21,10 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Health")
-	float MaxHP_CPP = 0.0f;
+	float MaxHP_CPP = 100.0f;
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Health", ReplicatedUsing = OnRep_CurHP_CPP)
-	float CurHP_CPP = 100.0f;
-	UPROPERTY(editAnyWhere, BlueprintReadWrite, Category = "Health", Replicated)
+	float CurHP_CPP = 0.0f;
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Health", Replicated)
 	bool Player_IsDead;
 
 
