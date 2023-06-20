@@ -63,10 +63,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	class UStaticMeshComponent* Floor;
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-	UStaticMeshComponent* Front1;
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-	UStaticMeshComponent* Front2;
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	UStaticMeshComponent* InnerButton;
 	UPROPERTY(VisibleAnywhere, Category = "Mesh", Replicated)
 	UStaticMeshComponent* Door1;

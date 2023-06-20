@@ -13,14 +13,11 @@ ADoor2::ADoor2()
 	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
 	RootComponent = BoxCollision;
 
-	DoorFrame = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DoorFrame"));
-	DoorFrame->SetupAttachment(RootComponent);
-
 	LeftDoor = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("LeftDoor"));
-	LeftDoor->SetupAttachment(DoorFrame);
+	LeftDoor->SetupAttachment(RootComponent);
 
 	RightDoor = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RightDoor"));
-	RightDoor->SetupAttachment(DoorFrame);
+	RightDoor->SetupAttachment(RootComponent);
 
 	DoorTimeline = CreateDefaultSubobject<UTimelineComponent>(TEXT("DoorTimeline"));
 

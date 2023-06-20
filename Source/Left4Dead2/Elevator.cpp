@@ -21,12 +21,6 @@ AElevator::AElevator()
 	Floor = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Floor"));
 	Floor->SetupAttachment(FloorCollision);
 
-	Front1 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Front1"));
-	Front1->SetupAttachment(RootComponent);
-
-	Front2 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Front2"));
-	Front2->SetupAttachment(RootComponent);
-
 	Ceiling = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Ceiling"));
 	Ceiling->SetupAttachment(RootComponent);
 

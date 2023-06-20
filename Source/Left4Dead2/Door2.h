@@ -41,8 +41,6 @@ private:
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Collision")
 	class UBoxComponent* BoxCollision;
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-	class UStaticMeshComponent* DoorFrame;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh", Replicated)
 	UStaticMeshComponent* LeftDoor;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Mesh", Replicated)
