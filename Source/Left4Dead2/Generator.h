@@ -65,8 +65,6 @@ private:
 	UPROPERTY(BlueprintReadWrite, EditInstanceOnly, meta = (AllowPrivateAccess = true))
 	AElevator* Elevator;
 
-	FTimerHandle TimerHandle;
-
 protected:
 	UFUNCTION(Server, Reliable, WithValidation, Category = "Sound")
 	void Server_GeneratorSound();

@@ -42,19 +42,22 @@ void AGenerator::MyInteract_Implementation()
 	if (HasAuthority())
 	{
 		GeneratorSound();
+		UE_LOG(LogTemp, Warning, TEXT("Generator on"));
 
-		// 발전기에 상호작용 시 2분 후에 탈출에 필요한 함수들이 실행되도록 타이머 설정
-		FTimerManager& TimerManager = GetWorldTimerManager();
-		
-		TimerManager.SetTimer(TimerHandle, this, &AGenerator::GeneratorOn, 120.f, false);
-		
-		TimerManager.SetTimer(TimerHandle, this, &AGenerator::CollapseFloorDelayed, 120.f, false);
-		UE_LOG(LogTemp, Warning, TEXT("The floor(1st) is Collapsed!"));
+		float DelaySeconds = 120.f;
+		bool bLooping = false;
 
-		TimerManager.SetTimer(TimerHandle, this, &AGenerator::SetTaskCheckDelayed, 120.f, false);
-		UE_LOG(LogTemp, Warning, TEXT("TaskCheck"));
+		FTimerHandle TimerHandle1;
+		GetWorldTimerManager().SetTimer(TimerHandle1, this, &AGenerator::GeneratorOn, DelaySeconds, bLooping);
 
-		TimerManager.SetTimer(TimerHandle, this, &AGenerator::LightOnDelayed, 120.f, false);
+		FTimerHandle TimerHandle2;
+		GetWorldTimerManager().SetTimer(TimerHandle2, this, &AGenerator::CollapseFloorDelayed, DelaySeconds, bLooping);
+
+		FTimerHandle TimerHandle3;
+		GetWorldTimerManager().SetTimer(TimerHandle3, this, &AGenerator::SetTaskCheckDelayed, DelaySeconds, bLooping);
+
+		FTimerHandle TimerHandle4;
+		GetWorldTimerManager().SetTimer(TimerHandle4, this, &AGenerator::LightOnDelayed, DelaySeconds, bLooping);
 	}
 }
 
